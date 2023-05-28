@@ -8,13 +8,25 @@ import ShowAppointment from "./pages/ShowAppointment";
 import ViewAppointment from "./pages/ViewAppointment";
 
 function Main() {
-	return (
-		<Routes>
-			<Route path="/" element={<ShowAppointment />} />
-			<Route path="/addAppointment" element={<AddAppointment />} />
-			<Route path="/editAppointment/:id" element={<EditAppointment />} />
-			<Route path="/showAppointment/:id" element={<ViewAppointment />} />
-		</Routes>
-	);
+  return (
+    <Routes>
+      <Route
+        path='/'
+        element={<ShowAppointment />}
+      />
+      <Route
+        path='/appointments/create'
+        element={<AddAppointment />}
+      />
+      <Route
+        path='/appointments/edit/:id'
+        element={<EditAppointment />}
+      />
+      <Route
+        path='/showAppointment/:id'
+        element={<ViewAppointment />}
+      />
+    </Routes>
+  );
 }
 export default Main;

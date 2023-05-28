@@ -5,15 +5,17 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Appointment;
+use Ramsey\Uuid\Uuid;
 
 class AppointmentSeeder extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $names = ['John Doe', 'Jane Smith', 'Michael Johnson', 'Emily Davis', 'David Brown', 'Sarah Wilson', 'Daniel Taylor', 'Olivia Anderson', 'Matthew Thomas', 'Sophia Martinez'];
+        $names = ['John Doe', 'Jane Smith', 'Michael Johnson', 'Emily Davis', 'David Brown', 'Sarah Wilson', 'Daniel Taylor', 'Olivia Anderson', 'Matthew Thomas', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez'];
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $appointment = new Appointment();
+            $appointment->setUuid(Uuid::uuid4()->toString());
             $appointment->setNames($names[$i]);
             $appointment->setPersonalIdentityNumber($this->generatePersonalIdentityNumber());
             $appointment->setTime($this->generateRandomTime());
