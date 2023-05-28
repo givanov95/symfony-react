@@ -14,6 +14,9 @@ class Appointment
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 100)]
+    private ?string $names = null;
+
     #[ORM\Column(length: 10)]
     private ?string $personal_identity_number = null;
 
@@ -26,6 +29,18 @@ class Appointment
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getNames(): ?string
+    {
+        return $this->names;
+    }
+
+    public function setNames(string $names): self
+    {
+        $this->names = $names;
+
+        return $this;
     }
 
     public function getPersonalIdentityNumber(): ?string
