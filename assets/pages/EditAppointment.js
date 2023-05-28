@@ -71,6 +71,7 @@ function EditAppointment() {
               name='name'
               onChange={(value) => handleInputChange("name", value)}
             />
+
             <Input
               label='Personal Number'
               for='personal-number'
@@ -80,6 +81,7 @@ function EditAppointment() {
               name='personalNumber'
               onChange={(value) => handleInputChange("personalNumber", value)}
             />
+
             <Input
               label='Choice date'
               for='date'

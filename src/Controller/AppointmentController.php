@@ -54,8 +54,8 @@ class AppointmentController extends AbstractController
         $entityManager->persist($appointment);
         $entityManager->flush();
 
-        $formattedTime = $appointment->getTime()->format('Y-m-d'); // Convert DateTime to string
-        return $this->json('New appointment has been added successfully for ' . $formattedTime);
+        $formattedTime = $appointment->getTime()->format('Y-m-d');
+        return $this->json('New appointment has been added successfully');
     }
 
     #[Route('/appointments/edit/{uuid}', name: 'appointment_edit', methods: ['GET'])]

@@ -33,7 +33,7 @@ function AddAppointment() {
         .then(function (response) {
           Swal.fire({
             icon: "success",
-            title: "Employee has been added successfully!",
+            title: "Appointment has been added successfully!",
             showConfirmButton: true,
           });
           setIsSaving(false);
