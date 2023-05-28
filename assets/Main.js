@@ -8,36 +8,13 @@ import ShowAppointment from "./pages/ShowAppointment";
 import ViewAppointment from "./pages/ViewAppointment";
 
 function Main() {
-  return (
-    <Router>
-      <Routes>
-        <Route
-          path='/'
-          element={<ShowAppointment />}
-        />
-        <Route
-          path='/addAppointment'
-          element={<AddAppointment />}
-        />
-        <Route
-          path='/editAppointment/:id'
-          element={<EditAppointment />}
-        />
-        <Route
-          path='/showAppointment/:id'
-          element={<ViewAppointment />}
-        />
-      </Routes>
-    </Router>
-  );
+	return (
+		<Routes>
+			<Route path="/" element={<ShowAppointment />} />
+			<Route path="/addAppointment" element={<AddAppointment />} />
+			<Route path="/editAppointment/:id" element={<EditAppointment />} />
+			<Route path="/showAppointment/:id" element={<ViewAppointment />} />
+		</Routes>
+	);
 }
 export default Main;
-if (document.getElementById("app")) {
-  const rootElement = document.getElementById("app");
-  const root = createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <Main />
-    </StrictMode>
-  );
-}

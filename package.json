@@ -10,7 +10,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
     "sweetalert2": "^11.7.5",
-    "webpack-notifier": "^1.15.0"
+    "webpack-notifier": "^1.15.0",
+    "yarn": "^1.22.19"
   },
   "scripts": {
     "dev-server": "encore dev-server",

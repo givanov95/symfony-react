@@ -53,16 +53,16 @@ Encore
 	.configureBabelPresetEnv((config) => {
 		config.useBuiltIns = "usage";
 		config.corejs = 3;
-	});
+	})
 
-// enables Sass/SCSS support
-//.enableSassLoader()
+	// enables Sass/SCSS support
+	//.enableSassLoader()
 
-// uncomment if you use TypeScript
-//.enableTypeScriptLoader()
+	// uncomment if you use TypeScript
+	//.enableTypeScriptLoader()
 
-// uncomment if you use React
-//.enableReactPreset()
+	// uncomment if you use React
+	.enableReactPreset();
 
 // uncomment to get integrity="..." attributes on your script & link tags
 // requires WebpackEncoreBundle 1.4 or higher

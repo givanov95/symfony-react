@@ -11,6 +11,8 @@ class ReactappController extends AbstractController
     #[Route('/reactapp', name: 'app_reactapp')]
     public function index(): Response
     {
+
+
         return $this->render('reactapp/index.html.twig');
     }
 }

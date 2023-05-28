@@ -10,7 +10,7 @@ use App\Entity\Appointment;
 
 class AppointmentController extends AbstractController
 {
-    #[Route('/appointment', name: 'app_appointment', methods: 'GET')]
+    #[Route('/appointments', name: 'app_appointment', methods: 'GET')]
     public function index(ManagerRegistry $doctrine): Response
     {
         $appointments = $doctrine
