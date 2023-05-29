@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 import Input from "../components/Input";
+import ErrorAlert from "../components/ErrorAlert";
 
 function EditAppointment({ history }) {
   const [uuid, setUuid] = useState(useParams().id);
@@ -132,70 +133,64 @@ function EditAppointment({ history }) {
   };
 
   return (
-    <div className="container">
-      <h2 className="text-center mt-5 mb-3">Add Appointment</h2>
+    <div className='container'>
+      <h2 className='text-center mt-5 mb-3'>Add Appointment</h2>
 
-      <div className="card">
-        <div className="card-header">
-          <Link className="btn btn-primary float-left mt-2 mb-2" to="/">
+      <div className='card'>
+        <div className='card-header'>
+          <Link
+            className='btn btn-primary float-left mt-2 mb-2'
+            to='/'>
             Back To Appointment List
           </Link>
         </div>
 
-        <div className="card-body">
-          {errorsBag.length > 0 && (
-            <div className="alert alert-danger">
-              {errorsBag.map((error, index) => (
-                <div className="mb-2" key={index}>
-                  {error}
-                </div>
-              ))}
-            </div>
-          )}
+        <div className='card-body'>
+          <ErrorAlert errorsBag={errorsBag} />
 
           <form>
             <Input
-              label="Name"
-              for="name"
+              label='Name'
+              for='name'
               value={formData.name}
-              type="text"
-              id="name"
-              name="name"
+              type='text'
+              id='name'
+              name='name'
               onChange={(value) => handleInputChange("name", value)}
             />
 
             <Input
-              label="Personal Number"
-              for="personal-number"
+              label='Personal Number'
+              for='personal-number'
               value={formData.personal_number}
-              type="text"
-              id="personal-number"
-              name="personalNumber"
-              maxLength="10"
+              type='text'
+              id='personal-number'
+              name='personalNumber'
+              maxLength='10'
               onChange={(value) => handleInputChange("personal_number", value)}
             />
 
             <Input
-              label="Choice date"
-              for="date"
+              label='Choice date'
+              for='date'
               value={formData.time}
-              type="date"
-              id="date"
-              name="dater"
+              type='date'
+              id='date'
+              name='dater'
               onChange={(value) => handleInputChange("time", value)}
             />
 
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
+            <div className='form-group'>
+              <label htmlFor='description'>Description</label>
               <textarea
                 onChange={(event) =>
                   handleInputChange("description", event.target.value)
                 }
                 value={formData.description}
-                type="text"
-                className="form-control"
-                id="description"
-                name="description"
+                type='text'
+                className='form-control'
+                id='description'
+                name='description'
                 required
               />
             </div>
@@ -203,9 +198,8 @@ function EditAppointment({ history }) {
             <button
               disabled={isSaving}
               onClick={updateRecord}
-              type="button"
-              className="btn btn-primary mt-3"
-            >
+              type='button'
+              className='btn btn-primary mt-3'>
               Update
             </button>
           </form>

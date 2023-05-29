@@ -93,7 +93,7 @@ class AppointmentController extends AbstractController
         $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
 
         if (!$appointment) {
-            throw $this->createNotFoundException('Часът не е намерен.');
+            throw $this->createNotFoundException('Appointment not found.');
         }
 
         $data = [
@@ -102,7 +102,14 @@ class AppointmentController extends AbstractController
             'description' => $appointment->getDescription(),
         ];
 
-        $clientAppointments = $entityManager->getRepository(Appointment::class)->findBy(['personal_identity_number' => $appointment->getPersonalIdentityNumber()]);
+        $currentDateTime = new \DateTime();
+        $clientAppointments = $entityManager->getRepository(Appointment::class)->createQueryBuilder('a')
+            ->where('a.personal_identity_number = :personalIdentityNumber')
+            ->andWhere('a.time > :currentDateTime')
+            ->setParameter('personalIdentityNumber', $appointment->getPersonalIdentityNumber())
+            ->setParameter('currentDateTime', $currentDateTime)
+            ->getQuery()
+            ->getResult();
 
         $otherAppointments = [];
 

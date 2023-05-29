@@ -8,13 +8,13 @@ function Input(props) {
   };
 
   return (
-    <div className="form-group">
-      <label htmlFor="props.for">{props.label}</label>
+    <div className='form-group'>
+      <label htmlFor='props.for'>{props.label}</label>
       <input
         onChange={handleChange}
         value={props.value}
         type={props.type}
-        className="form-control"
+        className='form-control'
         id={props.id}
         name={props.name}
         maxLength={props.maxLength}

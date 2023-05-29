@@ -68,7 +68,9 @@ function ShowAppointment() {
       const date = new Date(appointment.time);
       const filterFromDate = dateFrom ? new Date(dateFrom) : null;
       const filterToDate = dateTo ? new Date(dateTo) : null;
-      const clientName = appointment.name.includes(name.toLowerCase());
+      const clientName = appointment.name
+        .toLowerCase()
+        .includes(name.toLowerCase());
       const appointmentPersonalNumber = appointment.personalNumber.includes(
         personalNumber.toLowerCase()
       );
@@ -76,15 +78,19 @@ function ShowAppointment() {
       if (filterFromDate && date < filterFromDate) {
         return false;
       }
+
       if (filterToDate && date > filterToDate) {
         return false;
       }
+
       if (personalNumber && !appointmentPersonalNumber) {
         return false;
       }
+
       if (name && !clientName) {
         return false;
       }
+
       return true;
     });
 
@@ -116,57 +122,59 @@ function ShowAppointment() {
   };
 
   return (
-    <div className="container">
-      <h2 className="text-center mt-5 mb-3">Appointment</h2>
+    <div className='container'>
+      <h2 className='text-center mt-5 mb-3'>Appointment</h2>
 
-      <div className="card">
-        <div className="card-header">
-          <Link className="btn btn-primary mt-2 mb-2" to="/appointments/create">
+      <div className='card'>
+        <div className='card-header'>
+          <Link
+            className='btn btn-primary mt-2 mb-2'
+            to='/appointments/create'>
             Add Appointment
           </Link>
         </div>
 
-        <div className="card-body">
-          <div className="form-row mb-3">
-            <div className="col mb-2">
-              <label htmlFor="dateFrom">From:</label>
+        <div className='card-body'>
+          <div className='form-row mb-3'>
+            <div className='col mb-2'>
+              <label htmlFor='dateFrom'>From:</label>
               <input
-                type="date"
-                id="dateFrom"
-                className="form-control"
+                type='date'
+                id='dateFrom'
+                className='form-control'
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
               />
             </div>
 
-            <div className="col mb-2">
-              <label htmlFor="dateTo">To:</label>
+            <div className='col mb-2'>
+              <label htmlFor='dateTo'>To:</label>
               <input
-                type="date"
-                id="dateTo"
-                className="form-control"
+                type='date'
+                id='dateTo'
+                className='form-control'
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
               />
             </div>
 
-            <div className="col mb-2">
-              <label htmlFor="name">Client Name:</label>
+            <div className='col mb-2'>
+              <label htmlFor='name'>Client Name:</label>
               <input
-                type="text"
-                id="name"
-                className="form-control"
+                type='text'
+                id='name'
+                className='form-control'
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
 
-            <div className="col mb-2">
-              <label htmlFor="personalNumber">Personal Number:</label>
+            <div className='col mb-2'>
+              <label htmlFor='personalNumber'>Personal Number:</label>
               <input
-                type="text"
-                id="personalNumber"
-                className="form-control"
+                type='text'
+                id='personalNumber'
+                className='form-control'
                 value={personalNumber}
                 onChange={(e) => setPersonalNumber(e.target.value)}
               />
