@@ -14,6 +14,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AppointmentController extends AbstractController
 {
+    /**
+     * Index function
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     #[Route('/appointments', name: 'app_appointment', methods: 'GET')]
     public function index(ManagerRegistry $doctrine): Response
     {
@@ -36,11 +42,13 @@ class AppointmentController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/appointments/create"', name: 'appointment_create', methods: 'GET')]
-    public function crate()
-    {
-    }
-
+    /**
+     * Store function
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     #[Route('/appointments', name: 'add_appointment', methods: 'POST')]
     public function store(ManagerRegistry $doctrine, Request $request): Response
     {
@@ -60,7 +68,7 @@ class AppointmentController extends AbstractController
         $appointment = new Appointment();
         $appointment->setUuid(Uuid::uuid4()->toString());
         $appointment->setNames($request->request->get('name'));
-        $appointment->setPersonalIdentityNumber($request->request->get('personalNumber'));
+        $appointment->setPersonalIdentityNumber($request->request->get('personal_number'));
         $time = \DateTime::createFromFormat('Y-m-d', $request->request->get('time'));
         $appointment->setTime($time);
         $appointment->setDescription($request->request->get('description'));
@@ -71,6 +79,13 @@ class AppointmentController extends AbstractController
         return $this->json('New appointment has been added successfully');
     }
 
+    /**
+     * Show function
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param string $uuid
+     * @return void
+     */
     #[Route('/appointments/show/{uuid}', name: 'appointment_show', methods: 'GET')]
     public function show(ManagerRegistry $doctrine, string $uuid)
     {
@@ -82,10 +97,7 @@ class AppointmentController extends AbstractController
         }
 
         $data = [
-            'id' => $appointment->getId(),
-            'uuid' => $appointment->getUuid(),
             'name' => $appointment->getNames(),
-            'personalNumber' => $appointment->getPersonalIdentityNumber(),
             'time' => $appointment->getTime(),
             'description' => $appointment->getDescription(),
         ];
@@ -97,9 +109,7 @@ class AppointmentController extends AbstractController
         foreach ($clientAppointments as $clientAppointment) {
             if ($clientAppointment->getUuid() !== $appointment->getUuid()) {
                 $otherAppointments[] = [
-                    'uuid' => $clientAppointment->getUuid(),
                     'name' => $clientAppointment->getNames(),
-                    'personalNumber' => $clientAppointment->getPersonalIdentityNumber(),
                     'time' => $clientAppointment->getTime(),
                     'description' => $clientAppointment->getDescription(),
                 ];
@@ -107,12 +117,18 @@ class AppointmentController extends AbstractController
         }
 
         return $this->json([
-            'appointment' => $data,
+            'entity' => $data,
             'otherAppointments' => $otherAppointments,
         ]);
     }
 
-
+    /**
+     * Edit function
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param string $uuid
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     #[Route('/appointments/edit/{uuid}', name: 'appointment_edit', methods: 'GET')]
     public function edit(ManagerRegistry $doctrine, string $uuid): Response
     {
@@ -126,7 +142,7 @@ class AppointmentController extends AbstractController
         $data = [
             'uuid' => $appointment->getUuid(),
             'name' => $appointment->getNames(),
-            'egn' => $appointment->getPersonalIdentityNumber(),
+            'personal_number' => $appointment->getPersonalIdentityNumber(),
             'time' => $appointment->getTime(),
             'description' => $appointment->getDescription(),
         ];
@@ -134,6 +150,14 @@ class AppointmentController extends AbstractController
         return $this->json($data);
     }
 
+    /**
+     * Update function
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string $uuid
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     #[Route('/appointments/{uuid}', name: 'appointment_update', methods: 'PUT')]
     public function update(ManagerRegistry $doctrine, Request $request, string $uuid): Response
     {
@@ -158,7 +182,7 @@ class AppointmentController extends AbstractController
 
         $content = json_decode($request->getContent());
         $appointment->setNames($content->name);
-        $appointment->setPersonalIdentityNumber($content->personalNumber);
+        $appointment->setPersonalIdentityNumber($content->personal_number);
         $time = \DateTime::createFromFormat('Y-m-d', $content->time);
         $appointment->setTime($time);
         $appointment->setDescription($content->description);
@@ -168,6 +192,13 @@ class AppointmentController extends AbstractController
         return $this->json('Appointment has been updated successfully');
     }
 
+    /**
+     * Destroy function
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param string $uuid
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     #[Route('/appointments/{uuid}', name: 'appointment_delete', methods: 'DELETE')]
     public function destroy(ManagerRegistry $doctrine, string $uuid): Response
     {
@@ -190,7 +221,7 @@ class AppointmentController extends AbstractController
 
         $constraints = new Assert\Collection([
             'name' => new Assert\NotBlank(['message' => 'Name is required.']),
-            'personalNumber' => [
+            'personal_number' => [
                 new Assert\NotBlank(['message' => 'Personal Number is required.']),
                 new Assert\Regex([
                     'pattern' => '/^\d{10}$/',

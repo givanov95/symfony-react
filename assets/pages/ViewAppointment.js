@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 function ViewAppointment() {
   const { id } = useParams();
-  const [appointment, setAppointment] = useState(null);
+  const [entity, seEntity] = useState(null);
   const [otherAppointments, setOtherAppointments] = useState([]);
-  const datetime = new Date(otherAppointment.time);
 
   useEffect(() => {
     fetchAppointmentData();
@@ -16,8 +15,8 @@ function ViewAppointment() {
     axios
       .get(`/appointments/show/${id}`)
       .then(function (response) {
-        const { appointment, otherAppointments } = response.data;
-        setAppointment(appointment);
+        const { entity, otherAppointments } = response.data;
+        seEntity(entity);
         setOtherAppointments(otherAppointments);
       })
       .catch(function (error) {
@@ -25,7 +24,18 @@ function ViewAppointment() {
       });
   };
 
-  if (!appointment) {
+  function formatDate(date) {
+    const dateTime = new Date(date);
+    const year = dateTime.getFullYear();
+    const month = (dateTime.getMonth() + 1).toString().padStart(2, "0");
+    const day = dateTime.getDate().toString().padStart(2, "0");
+    const hours = dateTime.getHours().toString().padStart(2, "0");
+    const minutes = dateTime.getMinutes().toString().padStart(2, "0");
+
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
+  }
+
+  if (!entity) {
     return (
       <div className="d-flex align-items-center justify-content-center vh-100">
         Loading appointment details...
@@ -35,6 +45,13 @@ function ViewAppointment() {
 
   return (
     <div className="container mt-4">
+      <Link
+        className="btn btn-primary  mt-3 mb-3 d-flex flex-column align-items-center"
+        to="/"
+      >
+        Back To Appointment List
+      </Link>
+
       <h2 className="text-center mb-3">Appointment details</h2>
 
       <div className="row">
@@ -44,34 +61,25 @@ function ViewAppointment() {
               <div className="widget-49-title-wrapper">
                 <div className="widget-49-date-primary">
                   <span className="widget-49-date-day">
-                    {new Date(appointment.time).getDate()}
+                    {new Date(entity.time).getDate()}
                   </span>
+
                   <span className="widget-49-date-month">
-                    {new Date(appointment.time).toLocaleString("en-US", {
+                    {new Date(entity.time).toLocaleString("en-US", {
                       month: "short",
                     })}
                   </span>
                 </div>
+
                 <div className="widget-49-meeting-info">
-                  <span className="widget-49-pro-title">
-                    {appointment.name}
-                  </span>
+                  <span className="widget-49-pro-title">{entity.name}</span>
                   <span className="widget-49-meeting-time">
-                    12:00 to 13.30 Hrs
+                    {formatDate(entity.time)}
                   </span>
                 </div>
               </div>
-              <ol className="widget-49-meeting-points">
-                <li className="widget-49-meeting-item">
-                  <span>Expand module is removed</span>
-                </li>
-                <li className="widget-49-meeting-item">
-                  <span>Data migration is in scope</span>
-                </li>
-                <li className="widget-49-meeting-item">
-                  <span>Session timeout increase to 30 minutes</span>
-                </li>
-              </ol>
+
+              <div className="widget-49-meeting-item">{entity.description}</div>
             </div>
           </div>
         </div>
@@ -83,18 +91,19 @@ function ViewAppointment() {
             Others appointment with same client personal number
           </h2>
 
-          <div class="row">
+          <div className="row">
             {otherAppointments.map((otherAppointment, index) => (
-              <div key={index} class="col-lg-4">
-                <div class="card card-margin">
-                  <div class="card-body">
-                    <div class="widget-49">
-                      <div class="widget-49-title-wrapper">
-                        <div class="widget-49-date-primary">
-                          <span class="widget-49-date-day">
+              <div key={index} className="col-lg-4">
+                <div className="card card-margin">
+                  <div className="card-body">
+                    <div className="widget-49">
+                      <div className="widget-49-title-wrapper">
+                        <div className="widget-49-date-primary">
+                          <span className="widget-49-date-day">
                             {new Date(otherAppointment.time).getDate()}
                           </span>
-                          <span class="widget-49-date-month">
+
+                          <span className="widget-49-date-month">
                             {new Date(otherAppointment.time).toLocaleString(
                               "en-US",
                               {
@@ -103,26 +112,20 @@ function ViewAppointment() {
                             )}
                           </span>
                         </div>
-                        <div class="widget-49-meeting-info">
-                          <span class="widget-49-pro-title">
+
+                        <div className="widget-49-meeting-info">
+                          <span className="widget-49-pro-title">
                             {otherAppointment.name}
                           </span>
-                          <span class="widget-49-meeting-time">
-                            {otherAppointment.time}
+                          <span className="widget-49-meeting-time">
+                            {formatDate(otherAppointment.time)}
                           </span>
                         </div>
                       </div>
-                      <ol class="widget-49-meeting-points">
-                        <li class="widget-49-meeting-item">
-                          <span>Expand module is removed</span>
-                        </li>
-                        <li class="widget-49-meeting-item">
-                          <span>Data migration is in scope</span>
-                        </li>
-                        <li class="widget-49-meeting-item">
-                          <span>Session timeout increase to 30 minutes</span>
-                        </li>
-                      </ol>
+
+                      <div className="widget-49-meeting-item">
+                        {otherAppointment.description}
+                      </div>
                     </div>
                   </div>
                 </div>

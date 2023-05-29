@@ -8,7 +8,7 @@ import Input from "../components/Input";
 function AddAppointment() {
   const [formData, setFormData] = useState({
     name: "",
-    personalNumber: "",
+    personal_number: "",
     time: "",
     description: "",
   });
@@ -19,7 +19,7 @@ function AddAppointment() {
   useEffect(() => {
     setFormData({
       name: "",
-      personalNumber: "",
+      personal_number: "",
       time: "",
       description: "",
     });
@@ -37,13 +37,13 @@ function AddAppointment() {
     let data = new FormData();
 
     data.append("name", formData.name);
-    data.append("personalNumber", formData.personalNumber);
+    data.append("personal_number", formData.personal_number);
     data.append("time", formData.time);
     data.append("description", formData.description);
 
     if (
       formData.name === "" ||
-      formData.personalNumber === "" ||
+      formData.personal_number === "" ||
       formData.description === ""
     ) {
       Swal.fire({
@@ -56,7 +56,7 @@ function AddAppointment() {
       return;
     }
 
-    if (isNaN(formData.personalNumber)) {
+    if (isNaN(formData.personal_number)) {
       Swal.fire({
         icon: "error",
         title: "Please enter a numeric value for the Personal Number.",
@@ -67,7 +67,7 @@ function AddAppointment() {
       return;
     }
 
-    if (formData.personalNumber.length !== 10) {
+    if (formData.personal_number.length !== 10) {
       Swal.fire({
         icon: "error",
         title: "Please provide a 10-digit Personal Number.",
@@ -89,7 +89,7 @@ function AddAppointment() {
         setIsSaving(false);
         setFormData({
           name: "",
-          personalNumber: "",
+          personal_number: "",
           time: "",
           description: "",
         });
@@ -115,7 +115,7 @@ function AddAppointment() {
 
       <div className="card">
         <div className="card-header">
-          <Link className="btn btn-primary float-left" to="/">
+          <Link className="btn btn-primary float-left mt-2 mb-2" to="/">
             Back To Appointment List
           </Link>
         </div>
@@ -145,12 +145,12 @@ function AddAppointment() {
             <Input
               label="Personal Number"
               for="personal-number"
-              value={formData.personalNumber}
-              type="personalNumber"
+              value={formData.personal_number}
+              type="text"
               id="personal-number"
               name="personalNumber"
               maxLength="10"
-              onChange={(value) => handleInputChange("personalNumber", value)}
+              onChange={(value) => handleInputChange("personal_number", value)}
             />
 
             <Input

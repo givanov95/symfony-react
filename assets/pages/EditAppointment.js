@@ -12,7 +12,7 @@ function EditAppointment({ history }) {
   const [errorsBag, setErrorsBag] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
-    personalNumber: "",
+    personal_number: "",
     time: "",
     description: "",
   });
@@ -24,7 +24,7 @@ function EditAppointment({ history }) {
   useEffect(() => {
     setFormData({
       name: appointment.name,
-      personalNumber: appointment.egn,
+      personal_number: appointment.personal_number,
       time: appointment.time
         ? new Date(appointment.time).toISOString().split("T")[0]
         : "",
@@ -55,14 +55,14 @@ function EditAppointment({ history }) {
 
     const data = {
       name: formData.name,
-      personalNumber: formData.personalNumber,
+      personal_number: formData.personal_number,
       time: formData.time,
       description: formData.description,
     };
 
     if (
       formData.name === "" ||
-      formData.personalNumber === "" ||
+      formData.personal_number === "" ||
       formData.description === ""
     ) {
       Swal.fire({
@@ -75,7 +75,7 @@ function EditAppointment({ history }) {
       return;
     }
 
-    if (isNaN(formData.personalNumber)) {
+    if (isNaN(formData.personal_number)) {
       Swal.fire({
         icon: "error",
         title: "Please enter a numeric value for the Personal Number.",
@@ -86,7 +86,7 @@ function EditAppointment({ history }) {
       return;
     }
 
-    if (formData.personalNumber.length !== 10) {
+    if (formData.personal_number.length !== 10) {
       Swal.fire({
         icon: "error",
         title: "Please provide a 10-digit Personal Number.",
@@ -108,7 +108,7 @@ function EditAppointment({ history }) {
         setIsSaving(false);
         setFormData({
           name: appointment.name,
-          personalNumber: appointment.egn,
+          personal_number: appointment.personal_number,
           time: appointment.time
             ? new Date(appointment.time).toISOString().split("T")[0]
             : "",
@@ -137,7 +137,7 @@ function EditAppointment({ history }) {
 
       <div className="card">
         <div className="card-header">
-          <Link className="btn btn-primary float-left" to="/">
+          <Link className="btn btn-primary float-left mt-2 mb-2" to="/">
             Back To Appointment List
           </Link>
         </div>
@@ -167,12 +167,12 @@ function EditAppointment({ history }) {
             <Input
               label="Personal Number"
               for="personal-number"
-              value={formData.personalNumber}
-              type="personalNumber"
+              value={formData.personal_number}
+              type="text"
               id="personal-number"
               name="personalNumber"
               maxLength="10"
-              onChange={(value) => handleInputChange("personalNumber", value)}
+              onChange={(value) => handleInputChange("personal_number", value)}
             />
 
             <Input

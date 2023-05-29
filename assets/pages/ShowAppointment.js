@@ -7,10 +7,11 @@ import Pagination from "../components/Pagination";
 import Table from "../components/Table";
 
 function ShowAppointment() {
-  const [listAppointment, setAppointmentList] = useState([]);
+  const [entity, setEntity] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [name, setName] = useState("");
   const [personalNumber, setPersonalNumber] = useState("");
   const appointmentsPerPage = 10;
 
@@ -22,7 +23,7 @@ function ShowAppointment() {
     axios
       .get("/appointments")
       .then(function (response) {
-        setAppointmentList(response.data);
+        setEntity(response.data);
       })
       .catch(function (error) {
         console.log(error);
@@ -67,6 +68,7 @@ function ShowAppointment() {
       const date = new Date(appointment.time);
       const filterFromDate = dateFrom ? new Date(dateFrom) : null;
       const filterToDate = dateTo ? new Date(dateTo) : null;
+      const clientName = appointment.name.includes(name.toLowerCase());
       const appointmentPersonalNumber = appointment.personalNumber.includes(
         personalNumber.toLowerCase()
       );
@@ -80,6 +82,9 @@ function ShowAppointment() {
       if (personalNumber && !appointmentPersonalNumber) {
         return false;
       }
+      if (name && !clientName) {
+        return false;
+      }
       return true;
     });
 
@@ -88,7 +93,7 @@ function ShowAppointment() {
 
   const lastAppointment = currentPage * appointmentsPerPage;
   const firstAppointment = lastAppointment - appointmentsPerPage;
-  const filteredAppointments = filterAppointments(listAppointment);
+  const filteredAppointments = filterAppointments(entity);
   const appointments = filteredAppointments.slice(
     firstAppointment,
     lastAppointment
@@ -116,7 +121,7 @@ function ShowAppointment() {
 
       <div className="card">
         <div className="card-header">
-          <Link className="btn btn-primary" to="/appointments/create">
+          <Link className="btn btn-primary mt-2 mb-2" to="/appointments/create">
             Add Appointment
           </Link>
         </div>
@@ -142,6 +147,17 @@ function ShowAppointment() {
                 className="form-control"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
+              />
+            </div>
+
+            <div className="col mb-2">
+              <label htmlFor="name">Client Name:</label>
+              <input
+                type="text"
+                id="name"
+                className="form-control"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
