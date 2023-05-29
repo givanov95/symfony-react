@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Appointment;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class AppointmentController extends AbstractController
 {
@@ -25,7 +27,7 @@ class AppointmentController extends AbstractController
                 'id' => $appointment->getId(),
                 'uuid' => $appointment->getUuid(),
                 'name' => $appointment->getNames(),
-                'egn' => $appointment->getPersonalIdentityNumber(),
+                'personalNumber' => $appointment->getPersonalIdentityNumber(),
                 'time' => $appointment->getTime(),
                 'description' => $appointment->getDescription(),
             ];
@@ -42,6 +44,18 @@ class AppointmentController extends AbstractController
     #[Route('/appointments', name: 'add_appointment', methods: 'POST')]
     public function store(ManagerRegistry $doctrine, Request $request): Response
     {
+        $violations = $this->validateData($request->request->all());
+
+        if (count($violations) > 0) {
+            $errorMessages = [];
+
+            foreach ($violations as $violation) {
+                $errorMessages[] = $violation->getMessage();
+            }
+
+            return $this->json($errorMessages, 400);
+        }
+
         $entityManager = $doctrine->getManager();
         $appointment = new Appointment();
         $appointment->setUuid(Uuid::uuid4()->toString());
@@ -54,11 +68,52 @@ class AppointmentController extends AbstractController
         $entityManager->persist($appointment);
         $entityManager->flush();
 
-        $formattedTime = $appointment->getTime()->format('Y-m-d');
         return $this->json('New appointment has been added successfully');
     }
 
-    #[Route('/appointments/edit/{uuid}', name: 'appointment_edit', methods: ['GET'])]
+    #[Route('/appointments/show/{uuid}', name: 'appointment_show', methods: 'GET')]
+    public function show(ManagerRegistry $doctrine, string $uuid)
+    {
+        $entityManager = $doctrine->getManager();
+        $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
+
+        if (!$appointment) {
+            throw $this->createNotFoundException('Часът не е намерен.');
+        }
+
+        $data = [
+            'id' => $appointment->getId(),
+            'uuid' => $appointment->getUuid(),
+            'name' => $appointment->getNames(),
+            'personalNumber' => $appointment->getPersonalIdentityNumber(),
+            'time' => $appointment->getTime(),
+            'description' => $appointment->getDescription(),
+        ];
+
+        $clientAppointments = $entityManager->getRepository(Appointment::class)->findBy(['personal_identity_number' => $appointment->getPersonalIdentityNumber()]);
+
+        $otherAppointments = [];
+
+        foreach ($clientAppointments as $clientAppointment) {
+            if ($clientAppointment->getUuid() !== $appointment->getUuid()) {
+                $otherAppointments[] = [
+                    'uuid' => $clientAppointment->getUuid(),
+                    'name' => $clientAppointment->getNames(),
+                    'personalNumber' => $clientAppointment->getPersonalIdentityNumber(),
+                    'time' => $clientAppointment->getTime(),
+                    'description' => $clientAppointment->getDescription(),
+                ];
+            }
+        }
+
+        return $this->json([
+            'appointment' => $data,
+            'otherAppointments' => $otherAppointments,
+        ]);
+    }
+
+
+    #[Route('/appointments/edit/{uuid}', name: 'appointment_edit', methods: 'GET')]
     public function edit(ManagerRegistry $doctrine, string $uuid): Response
     {
         $entityManager = $doctrine->getManager();
@@ -79,39 +134,42 @@ class AppointmentController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/appointments/edit"', name: 'appointment_update', methods: 'PUT')]
-    public function update(ManagerRegistry $doctrine, Request $request, int $id): Response
+    #[Route('/appointments/{uuid}', name: 'appointment_update', methods: 'PUT')]
+    public function update(ManagerRegistry $doctrine, Request $request, string $uuid): Response
     {
         $entityManager = $doctrine->getManager();
-        $employee = $entityManager->getRepository(Employee::class)->find($id);
-        if (!$employee) {
-            return $this->json('No Employee found for id' . $id, 404);
+        $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
+
+        if (!$appointment) {
+            return $this->json('No appointment found', 404);
         }
+
+        $violations = $this->validateData((array)json_decode($request->getContent()));
+
+        if (count($violations) > 0) {
+            $errorMessages = [];
+
+            foreach ($violations as $violation) {
+                $errorMessages[] = $violation->getMessage();
+            }
+
+            return $this->json($errorMessages, 400);
+        }
+
         $content = json_decode($request->getContent());
-        $employee->setFullname($content->fullname);
-        $employee->setEmail($content->email);
-        $employee->setPassword($content->password);
-        $employee->setDegree($content->degree);
-        $employee->setDesignation($content->designation);
-        $employee->setAddress($content->address);
-        $employee->setContact($content->contact);
+        $appointment->setNames($content->name);
+        $appointment->setPersonalIdentityNumber($content->personalNumber);
+        $time = \DateTime::createFromFormat('Y-m-d', $content->time);
+        $appointment->setTime($time);
+        $appointment->setDescription($content->description);
+
         $entityManager->flush();
-        $data = [
-            'id'        => $employee->getId(),
-            'name'       => $employee->getFullname(),
-            'password'   => $employee->getPassword(),
-            'email'      => $employee->getEmail(),
-            'degree'     => $employee->getDegree(),
-            'designation' => $employee->getDesignation(),
-            'address'    => $employee->getAddress(),
-            'contact'    => $employee->getContact(),
-            'password'  => $employee->getPassword(),
-        ];
-        return $this->json($data);
+
+        return $this->json('Appointment has been updated successfully');
     }
 
     #[Route('/appointments/{uuid}', name: 'appointment_delete', methods: 'DELETE')]
-    public function delete(ManagerRegistry $doctrine, string $uuid): Response
+    public function destroy(ManagerRegistry $doctrine, string $uuid): Response
     {
         $entityManager = $doctrine->getManager();
         $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
@@ -124,5 +182,31 @@ class AppointmentController extends AbstractController
         $entityManager->flush();
 
         return $this->json('Deleted a Appointment successfully');
+    }
+
+    private function validateData($data)
+    {
+        $validator = Validation::createValidator();
+
+        $constraints = new Assert\Collection([
+            'name' => new Assert\NotBlank(['message' => 'Name is required.']),
+            'personalNumber' => [
+                new Assert\NotBlank(['message' => 'Personal Number is required.']),
+                new Assert\Regex([
+                    'pattern' => '/^\d{10}$/',
+                    'message' => 'Personal Number should be a 10-digit numeric value.',
+                ]),
+            ],
+            'time' => [
+                new Assert\NotBlank(['message' => 'Time is required.']),
+                new Assert\DateTime([
+                    'format' => 'Y-m-d',
+                    'message' => 'Time should be a valid date in the format Y-m-d.',
+                ]),
+            ],
+            'description' => new Assert\NotBlank(['message' => 'Description is required.']),
+        ]);
+
+        return $validator->validate($data, $constraints);
     }
 }

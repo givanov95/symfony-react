@@ -10,22 +10,10 @@ import ViewAppointment from "./pages/ViewAppointment";
 function Main() {
   return (
     <Routes>
-      <Route
-        path='/'
-        element={<ShowAppointment />}
-      />
-      <Route
-        path='/appointments/create'
-        element={<AddAppointment />}
-      />
-      <Route
-        path='/appointments/edit/:id'
-        element={<EditAppointment />}
-      />
-      <Route
-        path='/showAppointment/:id'
-        element={<ViewAppointment />}
-      />
+      <Route path="/" element={<ShowAppointment />} />
+      <Route path="/appointments/create" element={<AddAppointment />} />
+      <Route path="/appointments/edit/:id" element={<EditAppointment />} />
+      <Route path="/appointments/show/:id" element={<ViewAppointment />} />
     </Routes>
   );
 }
