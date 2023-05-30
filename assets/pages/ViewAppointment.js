@@ -9,10 +9,12 @@ function ViewAppointment() {
   const [entity, seEntity] = useState(null);
   const [otherAppointments, setOtherAppointments] = useState([]);
 
+  // Fetch the appointment list upon component mount
   useEffect(() => {
     fetchAppointmentData();
   }, []);
 
+  // Get all data from controller
   const fetchAppointmentData = () => {
     axios
       .get(`/appointments/show/${id}`)
@@ -26,6 +28,7 @@ function ViewAppointment() {
       });
   };
 
+  // Format date and time to "hh:mm dd-mm-yyyy" format
   function formatDate(date) {
     const dateTime = new Date(date);
     const year = dateTime.getFullYear();
@@ -37,6 +40,7 @@ function ViewAppointment() {
     return `${hours}:${minutes} ${day}-${month}-${year}`;
   }
 
+  // If the entity is not available, display a loading message
   if (!entity) {
     return (
       <div className="d-flex align-items-center justify-content-center vh-100">

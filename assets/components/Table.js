@@ -33,11 +33,8 @@ const Table = ({ columns, data, deleteRecord }) => {
         ) : (
           data.map((row, index) => (
             <tr key={index}>
+              <td>{index + 1}</td>
               {Object.entries(row).map(([key, value], index) => {
-                if (key === "time") {
-                  value = formatDate(value);
-                }
-
                 if (key === "name") {
                   return (
                     <td key={index}>
@@ -51,9 +48,12 @@ const Table = ({ columns, data, deleteRecord }) => {
                   );
                 }
 
+                if (key === "time") {
+                  value = formatDate(value);
+                }
+
                 return key !== "uuid" && <td key={index}>{value}</td>;
               })}
-
               <td>
                 <Link
                   className="btn btn-success mx-1"

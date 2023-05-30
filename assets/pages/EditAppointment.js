@@ -21,10 +21,12 @@ function EditAppointment({ history }) {
     description: "",
   });
 
+  // Fetch all data from controller
   useEffect(() => {
     fetchAppointmentList();
   }, []);
 
+  // Update the form data
   useEffect(() => {
     setFormData({
       name: appointment.name,
@@ -36,6 +38,7 @@ function EditAppointment({ history }) {
     });
   }, [appointment]);
 
+  // Get all data from controller
   const fetchAppointmentList = () => {
     axios
       .get(`/appointments/edit/${uuid}`)
@@ -47,6 +50,7 @@ function EditAppointment({ history }) {
       });
   };
 
+  // Update form data state by setting the value
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -54,9 +58,11 @@ function EditAppointment({ history }) {
     }));
   };
 
+  // Update record
   const updateRecord = () => {
     setIsSaving(true);
 
+    // Perform validation for all fields.
     validateFields(
       formData.name,
       formData.personal_number,
@@ -71,10 +77,12 @@ function EditAppointment({ history }) {
       description: formData.description,
     };
 
+    // Send a PUT request to update form data.
     axios
       .put(`/appointments/${uuid}`, data)
       .then(function (response) {
         message("success", "Appointment has been updated successfully!", true);
+        fetchAppointmentList();
         setFormData({
           name: appointment.name,
           personal_number: appointment.personal_number,
@@ -85,7 +93,6 @@ function EditAppointment({ history }) {
         });
         setErrorsBag([]);
         setIsSaving(false);
-        fetchAppointmentList();
       })
       .catch(function (error) {
         if (

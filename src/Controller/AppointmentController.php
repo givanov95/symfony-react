@@ -30,7 +30,6 @@ class AppointmentController extends AbstractController
 
         foreach ($appointments as $appointment) {
             $data[] = [
-                'id' => $appointment->getId(),
                 'uuid' => $appointment->getUuid(),
                 'name' => $appointment->getNames(),
                 'personalNumber' => $appointment->getPersonalIdentityNumber(),
@@ -75,7 +74,6 @@ class AppointmentController extends AbstractController
             return $this->json($errorMessages, 400);
         }
 
-        $entityManager = $doctrine->getManager();
         $appointment = new Appointment();
         $appointment->setUuid(Uuid::uuid4()->toString());
         $appointment->setNames($request->request->get('name'));
@@ -84,8 +82,8 @@ class AppointmentController extends AbstractController
         $appointment->setTime($time);
         $appointment->setDescription($request->request->get('description'));
 
-        $entityManager->persist($appointment);
-        $entityManager->flush();
+        $doctrine->getManager()->persist($appointment);
+        $doctrine->getManager()->flush();
 
         return $this->json('New appointment has been added successfully');
     }
@@ -102,8 +100,7 @@ class AppointmentController extends AbstractController
     #[Route('/appointments/show/{uuid}', name: 'appointment_show', methods: 'GET')]
     public function show(ManagerRegistry $doctrine, Request $request, string $uuid)
     {
-        $entityManager = $doctrine->getManager();
-        $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
+        $appointment = $doctrine->getManager()->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
 
         if (!$appointment) {
             throw $this->createNotFoundException('Appointment not found.');
@@ -116,7 +113,7 @@ class AppointmentController extends AbstractController
         ];
 
         $currentDateTime = new \DateTime();
-        $clientAppointments = $entityManager->getRepository(Appointment::class)->createQueryBuilder('a')
+        $clientAppointments = $doctrine->getManager()->getRepository(Appointment::class)->createQueryBuilder('a')
             ->where('a.personal_identity_number = :personalIdentityNumber')
             ->andWhere('a.time > :currentDateTime')
             ->setParameter('personalIdentityNumber', $appointment->getPersonalIdentityNumber())
@@ -127,13 +124,11 @@ class AppointmentController extends AbstractController
         $otherAppointments = [];
 
         foreach ($clientAppointments as $clientAppointment) {
-            if ($clientAppointment->getUuid() !== $appointment->getUuid()) {
-                $otherAppointments[] = [
-                    'name' => $clientAppointment->getNames(),
-                    'time' => $clientAppointment->getTime(),
-                    'description' => $clientAppointment->getDescription(),
-                ];
-            }
+            $otherAppointments[] = [
+                'name' => $clientAppointment->getNames(),
+                'time' => $clientAppointment->getTime(),
+                'description' => $clientAppointment->getDescription(),
+            ];
         }
 
         $acceptHeader = $request->headers->get('Accept');
@@ -159,8 +154,7 @@ class AppointmentController extends AbstractController
     #[Route('/appointments/edit/{uuid}', name: 'appointment_edit', methods: 'GET')]
     public function edit(ManagerRegistry $doctrine, Request $request, string $uuid): Response
     {
-        $entityManager = $doctrine->getManager();
-        $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
+        $appointment = $doctrine->getManager()->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
 
         if (!$appointment) {
             return $this->json('No Appointment found', 404);
@@ -194,8 +188,7 @@ class AppointmentController extends AbstractController
     #[Route('/appointments/{uuid}', name: 'appointment_update', methods: 'PUT')]
     public function update(ManagerRegistry $doctrine, Request $request, string $uuid): Response
     {
-        $entityManager = $doctrine->getManager();
-        $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
+        $appointment = $doctrine->getManager()->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
 
         if (!$appointment) {
             return $this->json('No appointment found', 404);
@@ -220,7 +213,7 @@ class AppointmentController extends AbstractController
         $appointment->setTime($time);
         $appointment->setDescription($content->description);
 
-        $entityManager->flush();
+        $doctrine->getManager()->flush();
 
         return $this->json('Appointment has been updated successfully');
     }
@@ -235,15 +228,14 @@ class AppointmentController extends AbstractController
     #[Route('/appointments/{uuid}', name: 'appointment_delete', methods: 'DELETE')]
     public function destroy(ManagerRegistry $doctrine, string $uuid): Response
     {
-        $entityManager = $doctrine->getManager();
-        $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
+        $appointment = $doctrine->getManager()->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
 
         if (!$appointment) {
             return $this->json('No Appointment found', 404);
         }
 
-        $entityManager->remove($appointment);
-        $entityManager->flush();
+        $doctrine->getManager()->remove($appointment);
+        $doctrine->getManager()->flush();
 
         return $this->json('Deleted a Appointment successfully');
     }

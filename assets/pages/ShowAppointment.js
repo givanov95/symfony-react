@@ -16,10 +16,17 @@ function ShowAppointment() {
   const [name, setName] = useState("");
   const [personalNumber, setPersonalNumber] = useState("");
 
+  // Fetch the appointment list upon component mount
   useEffect(() => {
     fetchAppointmentList();
   }, []);
 
+  // Retrieve the first page of results after applying the data set filter
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateFrom, dateTo, name, personalNumber]);
+
+  // Fetch all data from controller
   const fetchAppointmentList = () => {
     axios
       .get("/appointments")
@@ -31,6 +38,7 @@ function ShowAppointment() {
       });
   };
 
+  // Delete record
   const deleteRecord = (uuid) => {
     Swal.fire({
       title: "Are you sure you want to delete this appointment?",
@@ -60,6 +68,7 @@ function ShowAppointment() {
     });
   };
 
+  // Data filter based on date range, name, and personal number.
   const filterAppointments = (appointments) => {
     const filteredAppointments = appointments.filter((appointment) => {
       const date = new Date(appointment.time);
@@ -93,6 +102,7 @@ function ShowAppointment() {
     return filteredAppointments;
   };
 
+  // Perform pagination calculation
   const lastAppointment = currentPage * 10;
   const firstAppointment = lastAppointment - 10;
   const filteredAppointments = filterAppointments(entity);
@@ -102,12 +112,14 @@ function ShowAppointment() {
   );
   const totalPages = Math.ceil(filteredAppointments.length / 10);
 
+  // Handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
 
+  // Handle prev page
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);

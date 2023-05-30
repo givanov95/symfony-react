@@ -19,6 +19,7 @@ function AddAppointment() {
     description: "",
   });
 
+  // Update the form data
   useEffect(() => {
     setFormData({
       name: "",
@@ -28,6 +29,7 @@ function AddAppointment() {
     });
   }, []);
 
+  // Update form data state by setting the value
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -35,10 +37,12 @@ function AddAppointment() {
     }));
   };
 
+  // Update create
   const saveRecord = () => {
     setIsSaving(true);
     const data = new FormData();
 
+    // Perform validation for all fields.
     validateFields(
       formData.name,
       formData.personal_number,
@@ -51,6 +55,7 @@ function AddAppointment() {
     data.append("time", formData.time);
     data.append("description", formData.description);
 
+    // Send a PUT request to update form data.
     axios
       .post("/appointments", data)
       .then(function (response) {
