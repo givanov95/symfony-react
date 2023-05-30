@@ -30,6 +30,7 @@ class AppointmentController extends AbstractController
 
         foreach ($appointments as $appointment) {
             $data[] = [
+                'id' => $appointment->getId(),
                 'uuid' => $appointment->getUuid(),
                 'name' => $appointment->getNames(),
                 'personalNumber' => $appointment->getPersonalIdentityNumber(),

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Table = ({ columns, data, deleteRecord }) => {
+const Table = (props) => {
   function formatDate(date) {
     const dateTime = new Date(date);
     const year = dateTime.getFullYear();
@@ -17,23 +17,22 @@ const Table = ({ columns, data, deleteRecord }) => {
     <table className="table table-striped table-hover table-bordered">
       <thead className="thead-dark">
         <tr>
-          {columns.map((column, index) => (
+          {props.columns.map((column, index) => (
             <th key={index}>{column}</th>
           ))}
         </tr>
       </thead>
 
       <tbody>
-        {!data.length ? (
+        {!props.data.length ? (
           <tr>
-            <td className="text-center" colSpan={columns.length + 1}>
+            <td className="text-center" colSpan={props.columns.length + 1}>
               No data found.
             </td>
           </tr>
         ) : (
-          data.map((row, index) => (
+          props.data.map((row, index) => (
             <tr key={index}>
-              <td>{index + 1}</td>
               {Object.entries(row).map(([key, value], index) => {
                 if (key === "name") {
                   return (
@@ -63,7 +62,7 @@ const Table = ({ columns, data, deleteRecord }) => {
                 </Link>
 
                 <button
-                  onClick={() => deleteRecord(row.uuid)}
+                  onClick={() => props.deleteRecord(row.uuid)}
                   className="btn btn-danger mx-1"
                 >
                   Delete

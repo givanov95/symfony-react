@@ -5,65 +5,48 @@ namespace App\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Appointment;
+use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
+use Faker\Factory;
 
 class AppointmentSeeder extends Fixture
 {
+
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function load(ObjectManager $manager)
     {
-        $names = ['John Doe', 'Jane Smith', 'Michael Johnson', 'Emily Davis', 'David Brown', 'Sarah Wilson', 'Daniel Taylor', 'Olivia Anderson', 'Matthew Thomas', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez', 'Sophia Martinez'];
+        $faker = Factory::create();
+        $entities = [];
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $appointment = new Appointment();
             $appointment->setUuid(Uuid::uuid4()->toString());
-            $appointment->setNames($names[$i]);
-            $appointment->setPersonalIdentityNumber($this->generatePersonalIdentityNumber());
-            $appointment->setTime($this->generateRandomTime());
-            $appointment->setDescription($this->generateRandomDescription());
+            $appointment->setNames($faker->name);
+            $appointment->setPersonalIdentityNumber($faker->numerify('##########'));
+            $appointment->setTime($faker->dateTimeBetween('now', '+1 year'));
+            $appointment->setDescription($faker->realText(50));
 
-            $manager->persist($appointment);
+            $entities[] = $appointment;
         }
 
-        $manager->flush();
-    }
+        $this->entityManager->beginTransaction();
 
-    private function generateRandomTime()
-    {
-        $times = ['10:00', '11:30', '14:15', '16:45', '19:00'];
-        $index = array_rand($times);
-        $timeString = $times[$index];
+        try {
+            foreach ($entities as $entity) {
+                $this->entityManager->persist($entity);
+            }
 
-        $dateTime = \DateTime::createFromFormat('H:i', $timeString);
-        if (!$dateTime) {
-            throw new \Exception('Failed to create DateTime object from the generated time string.');
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+            throw $e;
         }
-
-        return $dateTime;
-    }
-
-    private function generateRandomDescription()
-    {
-        $descriptions = [
-            'General check-up',
-            'Dental cleaning',
-            'X-ray examination',
-            'Flu vaccination',
-            'Follow-up consultation'
-        ];
-        $index = array_rand($descriptions);
-
-        return $descriptions[$index];
-    }
-
-    private function generatePersonalIdentityNumber()
-    {
-        $characters = '0123456789';
-        $pin = '';
-
-        for ($i = 0; $i < 10; $i++) {
-            $pin .= $characters[rand(0, strlen($characters) - 1)];
-        }
-
-        return $pin;
     }
 }

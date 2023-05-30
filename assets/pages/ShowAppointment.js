@@ -15,6 +15,7 @@ function ShowAppointment() {
   const [dateTo, setDateTo] = useState("");
   const [name, setName] = useState("");
   const [personalNumber, setPersonalNumber] = useState("");
+  const [perPage, setPerPage] = useState(10); // Новото състояние за броя записи на страницата
 
   // Fetch the appointment list upon component mount
   useEffect(() => {
@@ -103,14 +104,14 @@ function ShowAppointment() {
   };
 
   // Perform pagination calculation
-  const lastAppointment = currentPage * 10;
-  const firstAppointment = lastAppointment - 10;
+  const lastAppointment = currentPage * perPage;
+  const firstAppointment = lastAppointment - perPage;
   const filteredAppointments = filterAppointments(entity);
   const appointments = filteredAppointments.slice(
     firstAppointment,
     lastAppointment
   );
-  const totalPages = Math.ceil(filteredAppointments.length / 10);
+  const totalPages = Math.ceil(filteredAppointments.length / perPage);
 
   // Handle next page
   const handleNextPage = () => {
@@ -124,6 +125,12 @@ function ShowAppointment() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
+  };
+
+  // Handle change per page
+  const handleChangePerPage = (event) => {
+    setPerPage(parseInt(event.target.value));
+    setCurrentPage(1); // Нулиране на текущата страница при промяна на броя записи
   };
 
   return (
@@ -147,6 +154,8 @@ function ShowAppointment() {
             setDateTo={setDateTo}
             setName={setName}
             setPersonalNumber={setPersonalNumber}
+            perPage={perPage}
+            setPerPage={setPerPage}
           />
 
           <Table

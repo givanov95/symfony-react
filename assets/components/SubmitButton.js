@@ -1,15 +1,15 @@
 import React from "react";
 
-const SubmitButton = ({ isSaving, submit, text }) => {
+const SubmitButton = (props) => {
   return (
     <button
-      disabled={isSaving}
-      onClick={submit}
+      disabled={props.isSaving}
+      onClick={props.submit}
       type="button"
       className="btn btn-primary mt-3"
     >
-      {isSaving && <span className="spinner-border spinner-border-sm" />}
-      {text}
+      {props.isSaving && <span className="spinner-border spinner-border-sm" />}
+      {props.text}
     </button>
   );
 };

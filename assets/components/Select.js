@@ -1,6 +1,6 @@
 import React from "react";
 
-function Input(props) {
+const Select = (props) => {
   const handleChange = (event) => {
     if (props.onChange) {
       props.onChange(event.target.value);
@@ -8,20 +8,23 @@ function Input(props) {
   };
 
   return (
-    <div className="form-group mb-2">
+    <div className="form-group">
       <label htmlFor="props.for">{props.label}</label>
-      <input
+      <select
         onChange={handleChange}
         value={props.value}
-        type={props.type}
         id={props.id}
-        name={props.name}
-        maxLength={props.maxLength}
-        className="form-control"
-        required
-      />
+        className="form-select"
+      >
+        {props.options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     </div>
   );
-}
+};
 
-export default Input;
+export default Select;
+
