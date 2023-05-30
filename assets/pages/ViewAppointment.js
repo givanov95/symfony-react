@@ -72,14 +72,21 @@ function ViewAppointment() {
                 </div>
 
                 <div className="widget-49-meeting-info">
-                  <span className="widget-49-pro-title">{entity.name}</span>
+                  <span className="widget-49-pro-title fw-normal">
+                    Name: {entity.name}
+                  </span>
 
                   <span className="widget-49-meeting-time">
-                    {formatDate(entity.time)}
+                    Date: {formatDate(entity.time)}
+                  </span>
+
+                  <span className="widget-49-meeting-time">
+                    Personal Number: {entity.personal_number}
                   </span>
                 </div>
               </div>
 
+              <h5 className="text-center mt-2 mb-1">Description</h5>
               <div className="widget-49-meeting-item">{entity.description}</div>
             </div>
           </div>
@@ -115,17 +122,22 @@ function ViewAppointment() {
                         </div>
 
                         <div className="widget-49-meeting-info">
-                          <span className="widget-49-pro-title">
-                            {otherAppointment.name}
+                          <span className="widget-49-pro-title fw-normal">
+                            Name: {otherAppointment.name}
                           </span>
 
                           <span className="widget-49-meeting-time">
-                            {formatDate(otherAppointment.time)}
+                            Date: {formatDate(otherAppointment.time)}
+                          </span>
+
+                          <span className="widget-49-meeting-time">
+                            Personal Number: {otherAppointment.personal_number}
                           </span>
                         </div>
                       </div>
 
-                      <div className="widget-49-meeting-item">
+                      <h5 className="text-center mt-2 mb-1">Description</h5>
+                      <div className="widget-49-meeting-item text-center">
                         {otherAppointment.description}
                       </div>
                     </div>

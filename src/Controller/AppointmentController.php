@@ -109,6 +109,7 @@ class AppointmentController extends AbstractController
 
         $data = [
             'name' => $appointment->getNames(),
+            'personal_number' => $appointment->getPersonalIdentityNumber(),
             'time' => $appointment->getTime(),
             'description' => $appointment->getDescription(),
         ];
@@ -127,6 +128,7 @@ class AppointmentController extends AbstractController
         foreach ($clientAppointments as $clientAppointment) {
             $otherAppointments[] = [
                 'name' => $clientAppointment->getNames(),
+                'personal_number' => $clientAppointment->getPersonalIdentityNumber(),
                 'time' => $clientAppointment->getTime(),
                 'description' => $clientAppointment->getDescription(),
             ];
