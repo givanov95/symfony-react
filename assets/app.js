@@ -18,7 +18,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("app"));
 root.render(
-  <BrowserRouter basename="/reactapp">
+  <BrowserRouter basename="/">
     <Main />
   </BrowserRouter>
 );

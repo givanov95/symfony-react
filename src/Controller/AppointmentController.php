@@ -20,7 +20,7 @@ class AppointmentController extends AbstractController
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    #[Route('/appointments', name: 'app_appointment', methods: 'GET')]
+    #[Route('/appointments', name: 'appointment_app', methods: 'GET')]
     public function index(ManagerRegistry $doctrine): Response
     {
         $appointments = $doctrine
@@ -40,6 +40,17 @@ class AppointmentController extends AbstractController
         }
 
         return $this->json($data);
+    }
+
+    /**
+     * Create function
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    #[Route('/appointments/create', name: 'appointment_create', methods: 'GET')]
+    public function create(): Response
+    {
+        return $this->render('reactapp/index.html.twig');
     }
 
     /**
@@ -79,15 +90,17 @@ class AppointmentController extends AbstractController
         return $this->json('New appointment has been added successfully');
     }
 
+
     /**
      * Show function
      *
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string $uuid
      * @return void
      */
     #[Route('/appointments/show/{uuid}', name: 'appointment_show', methods: 'GET')]
-    public function show(ManagerRegistry $doctrine, string $uuid)
+    public function show(ManagerRegistry $doctrine, Request $request, string $uuid)
     {
         $entityManager = $doctrine->getManager();
         $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
@@ -123,21 +136,28 @@ class AppointmentController extends AbstractController
             }
         }
 
-        return $this->json([
-            'entity' => $data,
-            'otherAppointments' => $otherAppointments,
-        ]);
+        $acceptHeader = $request->headers->get('Accept');
+
+        if ($acceptHeader && strpos($acceptHeader, 'application/json') !== false) {
+            return $this->json([
+                'entity' => $data,
+                'otherAppointments' => $otherAppointments,
+            ]);
+        }
+
+        return $this->render('reactapp/index.html.twig');
     }
 
     /**
      * Edit function
      *
      * @param \Doctrine\Persistence\ManagerRegistry $doctrine
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string $uuid
      * @return \Symfony\Component\HttpFoundation\Response
      */
     #[Route('/appointments/edit/{uuid}', name: 'appointment_edit', methods: 'GET')]
-    public function edit(ManagerRegistry $doctrine, string $uuid): Response
+    public function edit(ManagerRegistry $doctrine, Request $request, string $uuid): Response
     {
         $entityManager = $doctrine->getManager();
         $appointment = $entityManager->getRepository(Appointment::class)->findOneBy(['uuid' => $uuid]);
@@ -154,7 +174,13 @@ class AppointmentController extends AbstractController
             'description' => $appointment->getDescription(),
         ];
 
-        return $this->json($data);
+        $acceptHeader = $request->headers->get('Accept');
+
+        if ($acceptHeader && strpos($acceptHeader, 'application/json') !== false) {
+            return $this->json($data);
+        }
+
+        return $this->render('reactapp/index.html.twig');
     }
 
     /**

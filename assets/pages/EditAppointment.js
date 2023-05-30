@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 import axios from "axios";
 
-import Input from "../components/Input";
+import { validateFields, message } from "../Function";
+import BackButton from "../components/BackButton";
 import ErrorAlert from "../components/ErrorAlert";
+import Input from "../components/Input";
+import SubmitButton from "../components/SubmitButton";
+import Textarea from "../components/Textarea";
 
 function EditAppointment({ history }) {
   const [uuid, setUuid] = useState(useParams().id);
@@ -54,6 +57,13 @@ function EditAppointment({ history }) {
   const updateRecord = () => {
     setIsSaving(true);
 
+    validateFields(
+      formData.name,
+      formData.personal_number,
+      formData.time,
+      formData.description
+    );
+
     const data = {
       name: formData.name,
       personal_number: formData.personal_number,
@@ -61,52 +71,10 @@ function EditAppointment({ history }) {
       description: formData.description,
     };
 
-    if (
-      formData.name === "" ||
-      formData.personal_number === "" ||
-      formData.description === ""
-    ) {
-      Swal.fire({
-        icon: "error",
-        title: "Name, Personal Number and Description are required fields.",
-        showConfirmButton: true,
-        showCloseButton: true,
-      });
-      setIsSaving(false);
-      return;
-    }
-
-    if (isNaN(formData.personal_number)) {
-      Swal.fire({
-        icon: "error",
-        title: "Please enter a numeric value for the Personal Number.",
-        showConfirmButton: true,
-        showCloseButton: true,
-      });
-      setIsSaving(false);
-      return;
-    }
-
-    if (formData.personal_number.length !== 10) {
-      Swal.fire({
-        icon: "error",
-        title: "Please provide a 10-digit Personal Number.",
-        showConfirmButton: true,
-        showCloseButton: true,
-      });
-      setIsSaving(false);
-      return;
-    }
-
     axios
       .put(`/appointments/${uuid}`, data)
       .then(function (response) {
-        Swal.fire({
-          icon: "success",
-          title: "Appointment has been updated successfully!",
-          showConfirmButton: true,
-        });
-        setIsSaving(false);
+        message("success", "Appointment has been updated successfully!", true);
         setFormData({
           name: appointment.name,
           personal_number: appointment.personal_number,
@@ -116,6 +84,7 @@ function EditAppointment({ history }) {
           description: appointment.description,
         });
         setErrorsBag([]);
+        setIsSaving(false);
         fetchAppointmentList();
       })
       .catch(function (error) {
@@ -133,75 +102,63 @@ function EditAppointment({ history }) {
   };
 
   return (
-    <div className='container'>
-      <h2 className='text-center mt-5 mb-3'>Add Appointment</h2>
+    <div className="container">
+      <h2 className="text-center mt-5 mb-3">Add Appointment</h2>
 
-      <div className='card'>
-        <div className='card-header'>
-          <Link
-            className='btn btn-primary float-left mt-2 mb-2'
-            to='/'>
-            Back To Appointment List
-          </Link>
+      <div className="card">
+        <div className="card-header">
+          <BackButton />
         </div>
 
-        <div className='card-body'>
+        <div className="card-body">
           <ErrorAlert errorsBag={errorsBag} />
 
           <form>
             <Input
-              label='Name'
-              for='name'
+              label="Name"
+              for="name"
               value={formData.name}
-              type='text'
-              id='name'
-              name='name'
+              type="text"
+              id="name"
+              name="name"
               onChange={(value) => handleInputChange("name", value)}
             />
 
             <Input
-              label='Personal Number'
-              for='personal-number'
+              label="Personal Number"
+              for="personal-number"
               value={formData.personal_number}
-              type='text'
-              id='personal-number'
-              name='personalNumber'
-              maxLength='10'
+              type="text"
+              id="personal-number"
+              name="personalNumber"
+              maxLength="10"
               onChange={(value) => handleInputChange("personal_number", value)}
             />
 
             <Input
-              label='Choice date'
-              for='date'
+              label="Choice date"
+              for="date"
               value={formData.time}
-              type='date'
-              id='date'
-              name='dater'
+              type="date"
+              id="date"
+              name="date"
               onChange={(value) => handleInputChange("time", value)}
             />
 
-            <div className='form-group'>
-              <label htmlFor='description'>Description</label>
-              <textarea
-                onChange={(event) =>
-                  handleInputChange("description", event.target.value)
-                }
-                value={formData.description}
-                type='text'
-                className='form-control'
-                id='description'
-                name='description'
-                required
-              />
-            </div>
+            <Textarea
+              label="Description"
+              for="description"
+              value={formData.description}
+              id="description"
+              name="description"
+              onChange={(value) => handleInputChange("description", value)}
+            />
 
-            <button
-              disabled={isSaving}
-              onClick={updateRecord}
-              type='button'
-              className='btn btn-primary mt-3'>
-              Update
-            </button>
+            <SubmitButton
+              isSaving={isSaving}
+              submit={updateRecord}
+              text="Update"
+            />
           </form>
         </div>
       </div>

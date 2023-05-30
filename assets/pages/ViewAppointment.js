@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
+
+import BackButton from "../components/BackButton";
 
 function ViewAppointment() {
   const { id } = useParams();
@@ -32,7 +34,7 @@ function ViewAppointment() {
     const hours = dateTime.getHours().toString().padStart(2, "0");
     const minutes = dateTime.getMinutes().toString().padStart(2, "0");
 
-    return `${day}-${month}-${year} ${hours}:${minutes}`;
+    return `${hours}:${minutes} ${day}-${month}-${year}`;
   }
 
   if (!entity) {
@@ -45,13 +47,7 @@ function ViewAppointment() {
 
   return (
     <div className="container mt-4">
-      <Link
-        className="btn btn-primary  mt-3 mb-3 d-flex flex-column align-items-center"
-        to="/"
-      >
-        Back To Appointment List
-      </Link>
-
+      <BackButton />
       <h2 className="text-center mb-3">Appointment details</h2>
 
       <div className="row">
@@ -73,6 +69,7 @@ function ViewAppointment() {
 
                 <div className="widget-49-meeting-info">
                   <span className="widget-49-pro-title">{entity.name}</span>
+
                   <span className="widget-49-meeting-time">
                     {formatDate(entity.time)}
                   </span>
@@ -117,6 +114,7 @@ function ViewAppointment() {
                           <span className="widget-49-pro-title">
                             {otherAppointment.name}
                           </span>
+
                           <span className="widget-49-meeting-time">
                             {formatDate(otherAppointment.time)}
                           </span>

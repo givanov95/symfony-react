@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 
+import { message } from "../Function";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
+import TableFilter from "../components/TableFilter";
 
 function ShowAppointment() {
   const [entity, setEntity] = useState([]);
@@ -13,7 +15,6 @@ function ShowAppointment() {
   const [dateTo, setDateTo] = useState("");
   const [name, setName] = useState("");
   const [personalNumber, setPersonalNumber] = useState("");
-  const appointmentsPerPage = 10;
 
   useEffect(() => {
     fetchAppointmentList();
@@ -43,21 +44,17 @@ function ShowAppointment() {
         axios
           .delete(`/appointments/${uuid}`)
           .then(function (response) {
-            Swal.fire({
-              icon: "success",
-              title: "Appointment has been deleted successfully!",
-              showConfirmButton: false,
-              timer: 1000,
-            });
+            message(
+              "success",
+              "Appointment has been deleted successfully!",
+              false,
+              false,
+              1000
+            );
             fetchAppointmentList();
           })
           .catch(function (error) {
-            Swal.fire({
-              icon: "error",
-              title: "Oops, Something went wrong!",
-              showConfirmButton: false,
-              timer: 1000,
-            });
+            message("error", "Oops, Something went wrong!", false, false, 1000);
           });
       }
     });
@@ -71,9 +68,8 @@ function ShowAppointment() {
       const clientName = appointment.name
         .toLowerCase()
         .includes(name.toLowerCase());
-      const appointmentPersonalNumber = appointment.personalNumber.includes(
-        personalNumber.toLowerCase()
-      );
+      const appointmentPersonalNumber =
+        appointment.personalNumber.includes(personalNumber);
 
       if (filterFromDate && date < filterFromDate) {
         return false;
@@ -97,17 +93,14 @@ function ShowAppointment() {
     return filteredAppointments;
   };
 
-  const lastAppointment = currentPage * appointmentsPerPage;
-  const firstAppointment = lastAppointment - appointmentsPerPage;
+  const lastAppointment = currentPage * 10;
+  const firstAppointment = lastAppointment - 10;
   const filteredAppointments = filterAppointments(entity);
   const appointments = filteredAppointments.slice(
     firstAppointment,
     lastAppointment
   );
-
-  const totalPages = Math.ceil(
-    filteredAppointments.length / appointmentsPerPage
-  );
+  const totalPages = Math.ceil(filteredAppointments.length / 10);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -122,67 +115,37 @@ function ShowAppointment() {
   };
 
   return (
-    <div className='container'>
-      <h2 className='text-center mt-5 mb-3'>Appointment</h2>
+    <div className="container">
+      <h2 className="text-center mt-5 mb-3">Appointment</h2>
 
-      <div className='card'>
-        <div className='card-header'>
-          <Link
-            className='btn btn-primary mt-2 mb-2'
-            to='/appointments/create'>
+      <div className="card">
+        <div className="card-header">
+          <Link className="btn btn-primary mt-2 mb-2" to="/appointments/create">
             Add Appointment
           </Link>
         </div>
 
-        <div className='card-body'>
-          <div className='form-row mb-3'>
-            <div className='col mb-2'>
-              <label htmlFor='dateFrom'>From:</label>
-              <input
-                type='date'
-                id='dateFrom'
-                className='form-control'
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-              />
-            </div>
-
-            <div className='col mb-2'>
-              <label htmlFor='dateTo'>To:</label>
-              <input
-                type='date'
-                id='dateTo'
-                className='form-control'
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-              />
-            </div>
-
-            <div className='col mb-2'>
-              <label htmlFor='name'>Client Name:</label>
-              <input
-                type='text'
-                id='name'
-                className='form-control'
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-
-            <div className='col mb-2'>
-              <label htmlFor='personalNumber'>Personal Number:</label>
-              <input
-                type='text'
-                id='personalNumber'
-                className='form-control'
-                value={personalNumber}
-                onChange={(e) => setPersonalNumber(e.target.value)}
-              />
-            </div>
-          </div>
+        <div className="card-body">
+          <TableFilter
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            name={name}
+            personalNumber={personalNumber}
+            setDateFrom={setDateFrom}
+            setDateTo={setDateTo}
+            setName={setName}
+            setPersonalNumber={setPersonalNumber}
+          />
 
           <Table
-            columns={["№", "Name", "Personal number", "Time", "Description"]}
+            columns={[
+              "№",
+              "Name",
+              "Personal number",
+              "Time",
+              "Description",
+              "Action",
+            ]}
             data={appointments}
             deleteRecord={deleteRecord}
           />

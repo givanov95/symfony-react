@@ -20,12 +20,11 @@ const Table = ({ columns, data, deleteRecord }) => {
           {columns.map((column, index) => (
             <th key={index}>{column}</th>
           ))}
-          <th width="250px">Action</th>
         </tr>
       </thead>
 
       <tbody>
-        {data.length === 0 ? (
+        {!data.length ? (
           <tr>
             <td className="text-center" colSpan={columns.length + 1}>
               No data found.
@@ -79,4 +78,3 @@ const Table = ({ columns, data, deleteRecord }) => {
 };
 
 export default Table;
-

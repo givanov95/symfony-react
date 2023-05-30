@@ -1,6 +1,6 @@
 import React from "react";
 
-function Input(props) {
+function Textarea(props) {
   const handleChange = (event) => {
     if (props.onChange) {
       props.onChange(event.target.value);
@@ -9,19 +9,18 @@ function Input(props) {
 
   return (
     <div className="form-group">
-      <label htmlFor="props.for">{props.label}</label>
-      <input
+      <label htmlFor="description">{props.label}</label>
+      <textarea
         onChange={handleChange}
         value={props.value}
-        type={props.type}
         className="form-control"
         id={props.id}
         name={props.name}
-        maxLength={props.maxLength}
         required
       />
     </div>
   );
 }
 
-export default Input;
+export default Textarea;
+
