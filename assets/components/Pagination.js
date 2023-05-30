@@ -55,7 +55,10 @@ function Pagination(props) {
 
       <PrimaryButton
         onClick={() => props.handlePageClick(props.totalPages)}
-        disabled={props.currentPage === props.totalPages}
+        disabled={
+          props.currentPage === props.totalPages ||
+          props.currentPage >= props.totalPages - 2
+        }
         text="Last"
       />
     </div>
